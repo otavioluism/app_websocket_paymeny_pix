@@ -1,0 +1,36 @@
+# Notificacoes em tempo real: 
+
+- Muito utilizado para receber atualizações de dados, como no whats app é um serviço que trabalha
+em tempo real, não precisa ter uma ação para todo momento atualizar a página; 
+
+# WebSockets: 
+
+- É um protocolo de comunicação em tempo real (ou seja que tenha uma latência mínima que a percepão do 
+usuário é de estar em tempo real), onde se tem dois indivíduos incluídos CLIENTE e SERVIDOR. 
+
+- Para se iniciar uma comunicação é primeiro feito um HANDSHAKE que é uma porta estabelecidade tanto 
+para o cliente quanto ao SERVIDOR. Após isto é realizado transferência de dados sobre os dois lados.
+Quando algum dos indivíduos quiser fechar a conexão os dois lados terão uma mensagem de fechamento.
+
+Exemplos de aplicações: 
+
+- Chats; 
+- Rastreamento de atividades;
+- Miro;
+- Word (compartilhado);
+
+# Long Polling: 
+
+- É uma técnica para utilizar de comunicação em tempo real. Porém dependendo do serviço que se esteja 
+desenvolvendo esta técnica pode custar caro. Pois com ela toda vez que queremos uma atualização 
+ela requisita ao servidor e depois o servidor response. 
+
+- Pense no cenário que devemos implementar algo que requisita uma resposta a cada 2 segundos. 
+
+2 segundos x 60 segundos (min) = 120 requisições 
+2 segundos x 60 segundos (min) x 60 minutos (hora) = 720 requisições 
+
+- Por este motivo que o WebSockets é mais utilizado pelo custo, pois apenas precisa realizar o 
+HANDSHAKE (comunicação entre servidor e cliente), após isso ele requisita algo somente uma vez e 
+receberá em tempos as respostas do servidor sobre a requisição do cliente, sem precisar ficar solicitando
+novamente;
