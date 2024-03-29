@@ -8,6 +8,7 @@ class Payment(db.Model):
   qr_code = db.Column(db.String(100), nullable=True)
   expiration_date = db.Column(db.DateTime)
 
+  @property
   def to_dict(self) -> dict:  
     return {
       'id': self.id,
