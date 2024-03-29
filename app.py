@@ -1,10 +1,18 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from repository.database import db
+from db_models.payment import Payment
 
 app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.py'
+app.config['SECRET_KEY'] = 'SECRET_KEY_WEBSOCKET'
+
+db.init_app(app)
 
 # Rota para criar o pagamento
 @app.route('/payments/pix', methods=['POST'])
 def create_payment_pix(): 
+
   return jsonify({'message': 'The payment has been created'})
 
 # Rota para receber a confirmação do pagamento webHook a InstFina enviará para nós confirmação do pagamento 
