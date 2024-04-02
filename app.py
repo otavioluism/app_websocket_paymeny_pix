@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from repository.database import db
 from db_models.payment import Payment
 from datetime import datetime, timedelta
+from payments.pix import Pix
 
 app = Flask(__name__)
 
@@ -21,11 +22,21 @@ def create_payment_pix():
   expiration_date = datetime.now() + timedelta(minutes=30) # pega horario agora e soma 30 minutos
   payment = Payment(value=data.get('value'), expiration_date=expiration_date)
 
+  pix_obj = Pix()
+  data_payment_pix = pix_obj.create_payment()
+  
+  payment.bank_payment_id = data_payment_pix.get('bank_payment_id')
+  payment.qr_code = data_payment_pix.get('qr_code_path')
+
 
   db.session.add(payment)
   db.session.commit()
 
   return jsonify({'message': 'The payment has been created', 'payment': payment.to_dict})
+
+@app.route('/payments/pix/qr_code/<file_name>', methods=['GET'])
+def get_image(file_name): 
+  return send_file(f'static/img/{file_name}.png', mimetype='image/png')
 
 # Rota para receber a confirmação do pagamento webHook a InstFina enviará para nós confirmação do pagamento 
 @app.route('/payments/pix/confirmation', methods=['POST'])
