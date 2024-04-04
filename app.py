@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, send_file, render_template
+from flask_socketio import SocketIO
 from repository.database import db
 from db_models.payment import Payment
 from datetime import datetime, timedelta
@@ -10,6 +11,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.py'
 app.config['SECRET_KEY'] = 'SECRET_KEY_WEBSOCKET'
 
 db.init_app(app)
+socket_io = SocketIO(app)
 
 # Rota para criar o pagamento
 @app.route('/payments/pix', methods=['POST'])
@@ -59,5 +61,13 @@ def payment_pix_page(payment_id):
                          qr_code=payment.qr_code
                          )
 
+# WEBSOCKER - lado do servidor criando um evento de recebimento do cliente (handshake)
+
+@socket_io.on('connect')
+def handle_message():
+    print('Conexão ok do lado do servidor!')
+
+
+
 if __name__ == '__main__': 
-  app.run(debug=True)
+  socket_io.run(app, debug=True)
