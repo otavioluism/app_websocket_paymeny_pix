@@ -85,10 +85,13 @@ def payment_pix_page(payment_id):
 # WEBSOCKET - lado do servidor criando um evento de recebimento do cliente (handshake)
 
 @socket_io.on('connect')
-def handle_message():
-    print('Evento de conexao para o lado do servidor!')
+def handle_message_connect():
+    print('Cliente connected to the server!')
 
 
+@socket_io.on('disconnect')
+def handle_message_disconnect(): # esta funcao sera chamada quando na confirmacao do pagamento mudara a pagina, pois la não tem o script de socket
+    print('Cliente disconnected to the server!')
 
 if __name__ == '__main__': 
   socket_io.run(app, debug=True)

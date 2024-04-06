@@ -62,7 +62,7 @@
     <script>
         var socket = io.connect('{{host}}');
         socket.on('connect', function() {
-            console.log('Evento de conexao para o cliente!')
+            console.log('Client if connected the server!')
         });
 
         socket.on('payment-confirmed-{{payment_id}}', function() {
