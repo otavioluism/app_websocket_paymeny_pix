@@ -43,7 +43,23 @@ def get_image(file_name):
 # Rota para receber a confirmação do pagamento webHook a InstFina enviará para nós confirmação do pagamento 
 @app.route('/payments/pix/confirmation', methods=['POST'])
 def pix_confirmation(): 
-  return jsonify({'message': 'The payment has been created'})
+  data = request.json
+
+  if 'bank_payment_id' not in data and not 'value' not in data: 
+     return jsonify({'message': 'The request is invalid!'}), 400
+  
+  payment = Payment.query.filter_by(bank_payment_id=data.get('bank_payment_id')).first()
+
+  if not payment: 
+     return jsonify({'message': 'The payment was not founded!'}), 404
+    
+  if data.get('value') != payment.value: 
+     return jsonify({'message': 'The request is invalid!'}), 400
+  
+  payment.paid = True
+  db.session.commit()
+  socket_io.emit(f'payment-confirmed-{payment.id}')
+  return jsonify({'message': 'The payment has been paid out'})
 
 # Rota para criar a comunicação WebSocket
 @app.route('/payments/pix/<int:payment_id>', methods=['GET'])
@@ -52,8 +68,13 @@ def payment_pix_page(payment_id):
 
   if not payment: 
     return render_template('404.html')
-
   
+  if payment.paid: 
+     return render_template('confirmed_payment.html', 
+                            payment_id=payment.id,
+                            value=payment.value
+                            )
+
   return render_template('payment.html', 
                          payment_id=payment.id, 
                          value=payment.value, 
@@ -61,11 +82,11 @@ def payment_pix_page(payment_id):
                          qr_code=payment.qr_code
                          )
 
-# WEBSOCKER - lado do servidor criando um evento de recebimento do cliente (handshake)
+# WEBSOCKET - lado do servidor criando um evento de recebimento do cliente (handshake)
 
 @socket_io.on('connect')
 def handle_message():
-    print('Conexão ok do lado do servidor!')
+    print('Evento de conexao para o lado do servidor!')
 
 
 
