@@ -7,7 +7,7 @@ class Pix(object):
   def __init__(self):
     pass
 
-  def create_payment(self) -> dict:
+  def create_payment(self, base_url='') -> dict:
     #criando identificacao da Instituicao Financeira
     bank_payment_id = str(uuid.uuid4())
 
@@ -18,7 +18,7 @@ class Pix(object):
     img = qrcode.make(hash_payment)
 
     #salvando a imagem do qrcode na pasta...
-    img.save(f'static/img/qr_code_payment_{bank_payment_id}.png')
+    img.save(f'{base_url}static/img/qr_code_payment_{bank_payment_id}.png')
 
 
     return {
